@@ -16,55 +16,53 @@ public class Main {
       int a = sc.nextInt();
       int b = sc.nextInt();
       nodes[a].neighbors.add(b);
-      nodes[b].inDegree++;
+      nodes[b].distance++;
     }
 
     sc.close();
 
-    List<Integer> results = customSort(nodes);
-    for (int result : results) {
-      System.out.print(result + " ");
+    List<Integer> result = customSort(nodes);
+
+    for (int n : result) {
+      System.out.print(n + " ");
     }
   }
 
   private static List<Integer> customSort(Node[] nodes) {
-    List<Integer> results = new ArrayList<>();
-    Queue<Node> queue = new LinkedList<>();
+    List<Integer> result = new ArrayList<>();
+    Queue<Integer> queue = new LinkedList<>();
 
     for (int i = 1; i < nodes.length; i++) {
-      if (nodes[i].inDegree == 0) {
-        queue.add(nodes[i]);
+      if (nodes[i].distance == 0) {
+        queue.add(nodes[i].id);
       }
     }
 
     while (!queue.isEmpty()) {
-      Node node = queue.poll();
+      int id = queue.poll();
+      result.add(id);
 
-      if (node.inDegree == 0) {
-        results.add(node.id);
-      }
-
-      for (int neighbor : node.neighbors) {
-        nodes[neighbor].inDegree--;
-        if (nodes[neighbor].inDegree == 0) {
-          queue.add(nodes[neighbor]);
+      for (int neighbor : nodes[id].neighbors) {
+        nodes[neighbor].distance--;
+        if (nodes[neighbor].distance == 0) {
+          queue.add(neighbor);
         }
       }
     }
 
-    return results;
+    return result;
   }
 }
 
 class Node {
 
   int id;
-  int inDegree;
+  int distance;
   List<Integer> neighbors;
 
   public Node(int id) {
     this.id = id;
-    this.inDegree = 0;
+    this.distance = 0;
     this.neighbors = new ArrayList<>();
   }
 }
