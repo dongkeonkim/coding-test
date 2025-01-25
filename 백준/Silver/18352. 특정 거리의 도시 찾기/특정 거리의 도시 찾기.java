@@ -1,64 +1,71 @@
 import java.util.*;
+import java.io.*;
 
 public class Main {
+    public static void main(String[] args) throws IOException {
 
-    public static void main(String[] args) {
-        Scanner sc = new Scanner(System.in);
-        int N = sc.nextInt();
-        int M = sc.nextInt();
-        int K = sc.nextInt();
-        int X = sc.nextInt();
+        BufferedReader br = new BufferedReader(new InputStreamReader(System.in));
+        StringTokenizer st = new StringTokenizer(br.readLine());
 
-        ArrayList<ArrayList<Integer>> graph = new ArrayList<>();
+        int N = Integer.parseInt(st.nextToken());
+        int M = Integer.parseInt(st.nextToken());
+        int K = Integer.parseInt(st.nextToken());
+        int X = Integer.parseInt(st.nextToken());
 
+        List<List<Integer>> graph = new ArrayList<>();
         for (int i = 0; i <= N; i++) {
             graph.add(new ArrayList<>());
         }
 
-        for (int i = 0; i < M; i++) {
-            int from = sc.nextInt();
-            int to = sc.nextInt();
-            graph.get(from).add(to);
-        }
-        sc.close();
+        boolean[] visited = new boolean[N + 1];
 
-        ArrayList<Integer> result = bfs(graph, X, K);
+        for (int i = 0; i < M; i++) {
+            st = new StringTokenizer(br.readLine());
+            int A = Integer.parseInt(st.nextToken());
+            int B = Integer.parseInt(st.nextToken());
+            graph.get(A).add(B);
+        }
+
+        List<Integer> result = getShortDistance(graph, visited, X, K);
+
         Collections.sort(result);
 
         if (result.isEmpty()) {
             System.out.println("-1");
         } else {
-            for (int i : result) {
-                System.out.println(i);
+            for (int val : result) {
+                System.out.println(val);
             }
         }
     }
 
-    public static ArrayList<Integer> bfs(ArrayList<ArrayList<Integer>> graph, int X, int K) {
+    private static List<Integer> getShortDistance(List<List<Integer>> graph, boolean[] visited, int start,
+            int goalDistance) {
+        List<Integer> result = new ArrayList<>();
         Queue<int[]> queue = new LinkedList<>();
-        boolean[] visited = new boolean[graph.size() + 1];
-        ArrayList<Integer> result = new ArrayList<>();
-
-        queue.add(new int[] { X, 0 });
-        visited[X] = true;
+        queue.offer(new int[] { start, 0 });
+        visited[start] = true;
 
         while (!queue.isEmpty()) {
-            int[] current = queue.poll();
-            int city = current[0];
-            int distance = current[1];
+            int[] node = queue.poll();
+            int startCity = node[0];
+            int distance = node[1];
 
-            if (distance == K) {
-                result.add(city);
-                continue;
-            }
-
-            for (int neighbor : graph.get(city)) {
+            for (int neighbor : graph.get(startCity)) {
                 if (!visited[neighbor]) {
-                    queue.add(new int[] { neighbor, distance + 1 });
                     visited[neighbor] = true;
+
+                    if (goalDistance == distance + 1) {
+                        result.add(neighbor);
+                        continue;
+                    }
+
+                    queue.add(new int[] { neighbor, distance + 1 });
                 }
             }
         }
+
         return result;
     }
+
 }
