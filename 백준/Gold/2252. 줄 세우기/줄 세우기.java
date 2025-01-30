@@ -1,68 +1,66 @@
 import java.util.*;
+import java.io.*;
 
 public class Main {
 
-  public static void main(String[] args) {
-    Scanner sc = new Scanner(System.in);
-    int N = sc.nextInt();
-    int M = sc.nextInt();
+    static int[] parent;
+    static int[] rank;
 
-    Node[] nodes = new Node[N + 1];
-    for (int i = 1; i <= N; i++) {
-      nodes[i] = new Node(i);
-    }
+    public static void main(String[] args) throws IOException {
+        BufferedReader br = new BufferedReader(new InputStreamReader(System.in));
+        StringTokenizer st = new StringTokenizer(br.readLine());
+        int N = Integer.parseInt(st.nextToken());
+        int M = Integer.parseInt(st.nextToken());
 
-    for (int i = 0; i < M; i++) {
-      int a = sc.nextInt();
-      int b = sc.nextInt();
-      nodes[a].neighbors.add(b);
-      nodes[b].distance++;
-    }
-
-    sc.close();
-
-    List<Integer> result = customSort(nodes);
-
-    for (int n : result) {
-      System.out.print(n + " ");
-    }
-  }
-
-  private static List<Integer> customSort(Node[] nodes) {
-    List<Integer> result = new ArrayList<>();
-    Queue<Integer> queue = new LinkedList<>();
-
-    for (int i = 1; i < nodes.length; i++) {
-      if (nodes[i].distance == 0) {
-        queue.add(nodes[i].id);
-      }
-    }
-
-    while (!queue.isEmpty()) {
-      int id = queue.poll();
-      result.add(id);
-
-      for (int neighbor : nodes[id].neighbors) {
-        nodes[neighbor].distance--;
-        if (nodes[neighbor].distance == 0) {
-          queue.add(neighbor);
+        Node[] nodes = new Node[N + 1];
+        for (int i = 1; i <= N; i++) {
+            nodes[i] = new Node(i);
         }
-      }
-    }
 
-    return result;
-  }
+        for (int i = 0; i < M; i++) {
+            st = new StringTokenizer(br.readLine());
+            int A = Integer.parseInt(st.nextToken());
+            int B = Integer.parseInt(st.nextToken());
+            nodes[A].neighbors.add(B);
+            nodes[B].distance++;
+        }
+
+        Queue<Integer> queue = new LinkedList<>();
+        for (int i = 1; i <= N; i++) {
+            if (nodes[i].distance == 0) {
+                queue.offer(nodes[i].id);
+            }
+        }
+
+        List<Integer> result = new ArrayList<>();
+
+        while (!queue.isEmpty()) {
+            int nodeId = queue.poll();
+            result.add(nodeId);
+
+            for (int neighbor : nodes[nodeId].neighbors) {
+                nodes[neighbor].distance--;
+                if (nodes[neighbor].distance == 0) {
+                    queue.offer(neighbor);
+                }
+            }
+        }
+
+        for (int n : result) {
+            System.out.print(n + " ");
+        }
+
+    }
 }
 
 class Node {
+    int id;
+    int distance;
+    List<Integer> neighbors;
 
-  int id;
-  int distance;
-  List<Integer> neighbors;
-
-  public Node(int id) {
-    this.id = id;
-    this.distance = 0;
-    this.neighbors = new ArrayList<>();
-  }
+    public Node(int id) {
+        this.id = id;
+        this.distance = 0;
+        this.neighbors = new ArrayList<>();
+    }
 }
